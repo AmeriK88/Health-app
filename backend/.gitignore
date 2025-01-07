@@ -1,0 +1,19 @@
+# Variables de entorno
+.env
+
+# Archivos de configuración local
+*.log
+
+# Archivos de caché y migraciones innecesarias
+db.sqlite3
+migrations/
+
+# Archivos y carpetas de Python
+__pycache__/
+
+# Configuración de IDE
+.vscode/
+
+# Archivos de compilación y logs
+dist/
+build/
