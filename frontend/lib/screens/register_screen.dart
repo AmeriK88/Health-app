@@ -65,11 +65,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       await apiService.registerUser(
-        usernameController.text,
-        emailController.text,
-        passwordController.text,
-        int.parse(ageController.text),
-        bioController.text,
+        username: usernameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        age: int.parse(ageController.text),
+        bio: bioController.text,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
