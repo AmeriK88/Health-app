@@ -20,12 +20,15 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # Hosts permitidos
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
-# Configurar CORS para permitir solicitudes desde el frontend
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^http://localhost(:\d+)?$",        # Localhost con cualquier puerto
-    r"^http://127\.0\.0\.1(:\d+)?$",    # 127.0.0.1 con cualquier puerto
+    r"^http://localhost(:\d+)?$",  # Localhost con cualquier puerto
+    r"^http://127\.0\.0\.1(:\d+)?$",  # 127.0.0.1 con cualquier puerto
+    r"^https://nch3dfrw-61278\.uks1\.devtunnels\.ms(:\d+)?$",  # Dominio del túnel
 ]
 
+
+# Configurar CORS para permitir solicitudes desde el frontend
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 
 # JWT Configuración
 SIMPLE_JWT = {
