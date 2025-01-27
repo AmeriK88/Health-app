@@ -50,7 +50,7 @@ class UserDashboardView(APIView):
                 "weight": user.weight,
                 "height": user.height,
                 "goal": user.goal,
-                "avatar": user.avatar.url if user.avatar else None,
+                "avatar": request.build_absolute_uri(user.avatar.url) if user.avatar else None,
                 "physical_state": user.calculate_physical_state(),
                 "daily_statuses": daily_statuses_serialized,  # Añadimos estados diarios
             }

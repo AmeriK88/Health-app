@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
@@ -18,10 +19,8 @@ class ApiService {
     required String password,
     required int age,
     required String bio,
-    double? weight,
-    double? height,
-    String? goal,
-    File? avatar,
+    File? avatarFile,
+    Uint8List? avatarBytes,
   }) async {
     var uri = Uri.parse('${baseUrl}register/');
     var request = http.MultipartRequest('POST', uri);
@@ -32,16 +31,18 @@ class ApiService {
     request.fields['age'] = age.toString();
     request.fields['bio'] = bio;
 
-    if (weight != null) request.fields['weight'] = weight.toString();
-    if (height != null) request.fields['height'] = height.toString();
-    if (goal != null) request.fields['goal'] = goal;
-
-    if (avatar != null) {
-      final fileName = p.basename(avatar.path);
+    if (avatarFile != null) {
+      final fileName = p.basename(avatarFile.path);
       request.files.add(await http.MultipartFile.fromPath(
         'avatar',
-        avatar.path,
+        avatarFile.path,
         filename: fileName,
+      ));
+    } else if (avatarBytes != null) {
+      request.files.add(http.MultipartFile.fromBytes(
+        'avatar',
+        avatarBytes,
+        filename: 'avatar.jpg',
       ));
     }
 
@@ -52,6 +53,7 @@ class ApiService {
       throw Exception('Error al registrar el usuario: $responseBody');
     }
   }
+
 
   Future<String> login(String username, String password) async {
     final response = await http.post(

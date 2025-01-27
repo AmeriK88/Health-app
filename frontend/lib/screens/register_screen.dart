@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
 import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_field.dart';
@@ -21,7 +25,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
 
-  // Variables para validaciones
+  File? avatarFile; // Archivo para móviles
+  Uint8List? avatarBytes; // Bytes para Flutter Web
+  final ImagePicker _picker = ImagePicker();
+
   bool isLoading = false;
   String errorMessage = '';
 
@@ -54,6 +61,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return true;
   }
 
+  // Seleccionar avatar
+  Future<void> pickAvatar() async {
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          if (kIsWeb) {
+            pickedFile.readAsBytes().then((bytes) {
+              avatarBytes = bytes; // Asignar bytes para web
+              avatarFile = null; // Asegurarse de que no se usa `avatarFile`
+            });
+          } else {
+            avatarFile = File(pickedFile.path); // Asignar archivo para móvil
+            avatarBytes = null; // Asegurarse de que no se usan bytes
+          }
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al seleccionar la imagen: $e';
+      });
+    }
+  }
+
+
   // Función para registrar al usuario
   void register() async {
     if (!validateForm()) return;
@@ -70,6 +102,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: passwordController.text,
         age: int.parse(ageController.text),
         bio: bioController.text,
+        avatarFile: avatarFile,
+        avatarBytes: avatarBytes,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +120,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Fondo con gradiente
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -108,11 +141,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Logo
-                    Image.asset('assets/avatar.png', height: 100),
-                    const SizedBox(height: 20),
-
-                    // Título
                     const Text(
                       'Crear Cuenta',
                       style: TextStyle(
@@ -123,12 +151,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
 
-                    // Mensaje de error
                     if (errorMessage.isNotEmpty)
                       ErrorMessage(message: errorMessage),
                     const SizedBox(height: 10),
 
-                    // Campos de entrada
                     InputField(
                       controller: usernameController,
                       label: 'Usuario',
@@ -167,7 +193,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Botón de registro reutilizable
+                    // Vista previa del avatar seleccionado
+                    if (avatarBytes != null)
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: MemoryImage(avatarBytes!),
+                      )
+                    else if (avatarFile != null)
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: FileImage(avatarFile!),
+                      )
+                    else
+                      const CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.person, size: 50, color: Colors.white),
+                      ),
+                    TextButton(
+                      onPressed: pickAvatar,
+                      child: const Text('Seleccionar Avatar'),
+                    ),
+
                     CustomButton(
                       text: 'Registrar',
                       onPressed: register,

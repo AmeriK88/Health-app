@@ -45,5 +45,17 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Descripción del uso de la cámara -->
+	<key>NSCameraUsageDescription</key>
+	<string>Esta aplicación necesita acceder a la cámara para permitir que los usuarios seleccionen una foto de perfil.</string>
+	
+	<!-- Descripción del uso del almacenamiento -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Esta aplicación necesita acceder a la galería para permitir que los usuarios seleccionen una foto de perfil.</string>
+	
+	<!-- Descripción para escritura en almacenamiento -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Esta aplicación necesita permiso para guardar imágenes en tu galería.</string>
 </dict>
 </plist>

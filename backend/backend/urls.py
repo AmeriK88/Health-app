@@ -1,10 +1,11 @@
 # backend/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # En lugar de path('api/', ...), hacemos:
     path('api/users/', include('users.urls')),
     path('api/daily_status/', include('daily_status.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -14,20 +14,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Health App', // Nombre de la aplicación
+      title: 'Health App',
       theme: ThemeData(
-        primarySwatch: Colors.blue, // Color principal
-        useMaterial3: true, // Activar Material 3
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
-      initialRoute: '/', // Ruta inicial
+      initialRoute: '/',
       routes: {
-        '/': (context) => const LoginScreen(), // Ruta inicial (Login)
-        '/register': (context) => const RegisterScreen(), // Registro
+        '/': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/home': (context) {
-          final token = ModalRoute.of(context)!.settings.arguments as String; // Obtener el token
-          return HomeScreen(token: token); // Pasar el token a HomeScreen
+          final token = ModalRoute.of(context)!.settings.arguments as String;
+          return HomeScreen(token: token);
         },
-        '/configuracion': (context) => const ConfigurationScreen(), // Configuración inicial
+        '/configuracion': (context) => const ConfigurationScreen(),
       },
     );
   }

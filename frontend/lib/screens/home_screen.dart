@@ -1,11 +1,10 @@
-import 'dart:convert'; 
-import '../services/daily_status_service.dart'; 
+import 'dart:convert';
+import '../services/daily_status_service.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import '../services/api_service.dart';
 import 'daily_status_screen.dart';
 import 'initial_setup_screen.dart';
-
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -61,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void showRecommendationSnackBar(Map<String, dynamic> dailyStatus) {
-    final recommendation = dailyStatus['recommendation'] ?? 'Sin recomendaciones.';
+    final recommendation =
+        dailyStatus['recommendation'] ?? 'Sin recomendaciones.';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(recommendation),
@@ -111,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Información del usuario
                         Card(
                           color: Colors.white.withOpacity(0.9),
                           elevation: 8,
@@ -131,21 +132,52 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
+                                // Mostrar avatar del usuario
+                                if (userData?['avatar'] != null)
+                                  CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage:
+                                        NetworkImage(userData!['avatar']),
+                                    onBackgroundImageError: (_, __) {
+                                      setState(() {
+                                        errorMessage =
+                                            'Error al cargar la imagen del avatar.';
+                                      });
+                                    },
+                                  )
+                                else
+                                  const CircleAvatar(
+                                    radius: 50,
+                                    backgroundColor: Colors.grey,
+                                    child: Icon(Icons.person,
+                                        size: 50, color: Colors.white),
+                                  ),
+                                const SizedBox(height: 10),
                                 Text('Usuario: ${userData?['username']}'),
                                 Text('Peso: ${userData?['weight']} kg'),
                                 Text('Altura: ${userData?['height']} cm'),
                                 Text('Objetivo: ${userData?['goal']}'),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Estado Físico: ${userData?['physical_state']}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.teal,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         ),
                         const SizedBox(height: 20),
+                        // Estados diarios
                         if (dailyStatuses != null && dailyStatuses!.isNotEmpty)
                           ...dailyStatuses!.map((status) {
                             return Card(
                               color: Colors.white.withOpacity(0.9),
                               elevation: 8,
-                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              margin:
+                                  const EdgeInsets.symmetric(vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
@@ -160,7 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Energía: ${status['energy_level']}'),
+                                    Text(
+                                        'Energía: ${status['energy_level']}'),
                                     Text('Estado de Ánimo: ${status['mood']}'),
                                     Text('Dolor: ${status['has_pain'] ? 'Sí' : 'No'}'),
                                     Text('Cansancio: ${status['is_tired'] ? 'Sí' : 'No'}'),
@@ -169,7 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 trailing: IconButton(
                                   icon: const Icon(Icons.info_outline),
                                   color: Colors.teal,
-                                  onPressed: () => showRecommendationSnackBar(status),
+                                  onPressed: () =>
+                                      showRecommendationSnackBar(status),
                                 ),
                               ),
                             );
@@ -177,7 +211,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         else
                           const Text(
                             'No hay estados diarios registrados.',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 16),
                           ),
                         const SizedBox(height: 20),
                         ElevatedButton(
