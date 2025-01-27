@@ -17,3 +17,5 @@ __pycache__/
 # Archivos de compilación y logs
 dist/
 build/
+
+media/

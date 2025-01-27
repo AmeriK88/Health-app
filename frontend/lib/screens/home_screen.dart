@@ -5,6 +5,9 @@ import 'login_screen.dart';
 import '../services/api_service.dart';
 import 'daily_status_screen.dart';
 import 'initial_setup_screen.dart';
+import '../utils/styles.dart';
+import '../widgets/custom_button.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -76,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inicio'),
-        backgroundColor: Colors.teal, // Color del AppBar
+        backgroundColor: AppStyles.primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -90,24 +93,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.teal, Colors.tealAccent], // Gradiente de fondo
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        decoration: AppStyles.gradientBackground,
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : errorMessage.isNotEmpty
                 ? Center(
                     child: Text(
                       errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 18),
+                      style: AppStyles.errorTextStyle,
                     ),
                   )
                 : SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: AppStyles.pagePadding,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -119,17 +116,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: AppStyles.pagePadding,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Información del Usuario:',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.teal,
-                                  ),
+                                  style: AppStyles.headerTextStyle,
                                 ),
                                 const SizedBox(height: 10),
                                 // Mostrar avatar del usuario
@@ -160,15 +153,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 10),
                                 Text(
                                   'Estado Físico: ${userData?['physical_state']}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.teal,
-                                  ),
+                                  style: AppStyles.headerTextStyle,
                                 ),
                               ],
                             ),
                           ),
                         ),
+                        CustomButton(
+                          text: 'Editar Información',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => InitialSetupScreen(token: widget.token),
+                              ),
+                            ).then((_) => fetchUserData());
+                          },
+                          color: AppStyles.primaryColor,
+                        ),
+
                         const SizedBox(height: 20),
                         // Estados diarios
                         if (dailyStatuses != null && dailyStatuses!.isNotEmpty)
@@ -184,10 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: ListTile(
                                 title: Text(
                                   'Fecha: ${status['date']}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.teal,
-                                  ),
+                                  style: AppStyles.headerTextStyle,
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.info_outline),
-                                  color: Colors.teal,
+                                  color: AppStyles.primaryColor,
                                   onPressed: () =>
                                       showRecommendationSnackBar(status),
                                 ),
@@ -211,8 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         else
                           const Text(
                             'No hay estados diarios registrados.',
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 16),
+                            style: AppStyles.errorTextStyle,
                           ),
                         const SizedBox(height: 20),
                         ElevatedButton(
@@ -226,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ).then((_) => fetchUserData());
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
+                            backgroundColor: AppStyles.primaryColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

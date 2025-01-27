@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../utils/styles.dart';
 
 class InitialSetupScreen extends StatefulWidget {
   final String token;
@@ -57,9 +58,12 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Configuración Inicial')),
+      appBar: AppBar(
+        title: const Text('Configuración Inicial'),
+        backgroundColor: AppStyles.primaryColor,
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: AppStyles.pagePadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -68,12 +72,12 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
                   errorMessage,
-                  style: const TextStyle(color: Colors.red, fontSize: 14),
+                  style: AppStyles.errorTextStyle,
                 ),
               ),
             const Text(
               'Completa los datos iniciales:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppStyles.headerTextStyle,
             ),
             const SizedBox(height: 16),
             TextField(
@@ -106,6 +110,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: saveData,
+                style: AppStyles.primaryButtonStyle,
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text('Guardar'),

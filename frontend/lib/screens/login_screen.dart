@@ -7,6 +7,7 @@ import 'daily_status_screen.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_field.dart';
 import '../widgets/error_message.dart';
+import '../utils/styles.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -24,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMessage = '';
   bool isLoading = false;
 
-  /// Redirige al usuario dependiendo de si tiene un estado diario registrado para hoy
   Future<void> handleRedirection(String token) async {
     try {
       final todayStatuses = await fetchDailyStatuses(token);
@@ -55,8 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  /// Lógica de inicio de sesión
-  /// Lógica de inicio de sesión
   void login() async {
     if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
       setState(() {
@@ -91,23 +89,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blueAccent, Colors.lightBlue],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        decoration: AppStyles.loginGradientBackground,
         child: Center(
           child: SingleChildScrollView(
             child: Card(
               elevation: 8,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
+              margin: AppStyles.cardMargin,
+              shape: AppStyles.cardBorderStyle,
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: AppStyles.cardPadding,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -115,11 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 20),
                     const Text(
                       'Iniciar Sesión',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
-                      ),
+                      style: AppStyles.loginHeaderTextStyle,
                     ),
                     const SizedBox(height: 10),
                     if (errorMessage.isNotEmpty)
@@ -154,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text(
                         '¿No tienes cuenta? Regístrate aquí',
-                        style: TextStyle(color: Colors.blueAccent),
+                        style: AppStyles.linkTextStyle,
                       ),
                     ),
                   ],

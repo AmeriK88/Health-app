@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/daily_status_service.dart';
+import '../utils/styles.dart';
 import 'home_screen.dart';
 
 class DailyStatusScreen extends StatefulWidget {
@@ -78,16 +79,19 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrar Estado Diario')),
+      appBar: AppBar(
+        title: const Text('Registrar Estado Diario'),
+        backgroundColor: AppStyles.primaryColor,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: AppStyles.pagePadding,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'Nivel de Energía',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: AppStyles.headerTextStyle,
               ),
               DropdownButton<String>(
                 value: selectedEnergyLevel,
@@ -107,7 +111,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
               const SizedBox(height: 20),
               const Text(
                 'Dolor',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: AppStyles.headerTextStyle,
               ),
               SwitchListTile(
                 title: const Text('¿Tienes dolor?'),
@@ -121,7 +125,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
               const SizedBox(height: 20),
               const Text(
                 'Cansancio',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: AppStyles.headerTextStyle,
               ),
               SwitchListTile(
                 title: const Text('¿Estás cansado?'),
@@ -135,7 +139,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
               const SizedBox(height: 20),
               const Text(
                 'Estado de Ánimo',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: AppStyles.headerTextStyle,
               ),
               DropdownButton<String>(
                 value: selectedMood,
@@ -155,7 +159,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
               const SizedBox(height: 20),
               const Text(
                 'Notas adicionales',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: AppStyles.headerTextStyle,
               ),
               TextField(
                 controller: notesController,
@@ -168,6 +172,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: isLoading ? null : () => saveStatus(context),
+                style: AppStyles.primaryButtonStyle,
                 child: isLoading
                     ? const CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

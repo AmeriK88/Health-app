@@ -7,6 +7,7 @@ import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_field.dart';
 import '../widgets/error_message.dart';
+import '../utils/styles.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -85,7 +86,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-
   // Función para registrar al usuario
   void register() async {
     if (!validateForm()) return;
@@ -121,33 +121,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.tealAccent, Colors.teal],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        decoration: AppStyles.gradientBackground,
         child: Center(
           child: SingleChildScrollView(
             child: Card(
               elevation: 8,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
+              margin: AppStyles.cardMargin,
+              shape: AppStyles.cardBorderStyle,
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: AppStyles.cardPadding,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
                       'Crear Cuenta',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
-                      ),
+                      style: AppStyles.headerTextStyle,
                     ),
                     const SizedBox(height: 10),
 
@@ -219,7 +207,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       text: 'Registrar',
                       onPressed: register,
                       isLoading: isLoading,
-                      color: Colors.teal,
                     ),
                   ],
                 ),
