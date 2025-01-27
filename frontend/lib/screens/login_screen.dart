@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import 'home_screen.dart';
+import '../services/daily_status_service.dart';
 import 'register_screen.dart';
+import 'home_screen.dart';
+import 'daily_status_screen.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_field.dart';
 import '../widgets/error_message.dart';
@@ -29,15 +31,35 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
+      // Llama a la API para autenticar y obtener el token
       final token = await apiService.login(
         usernameController.text,
         passwordController.text,
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen(token: token)),
-      );
+      // Verifica si ya tiene un estado registrado para hoy
+      final todayStatuses = await fetchDailyStatuses(token);
+
+      final bool hasTodayStatus = todayStatuses.any((status) {
+        final statusDate = DateTime.parse(status['date']);
+        final now = DateTime.now();
+        return statusDate.year == now.year &&
+            statusDate.month == now.month &&
+            statusDate.day == now.day;
+      });
+
+      // Redirige al usuario dependiendo de si tiene un estado registrado
+      if (hasTodayStatus) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen(token: token)),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DailyStatusScreen(token: token)),
+        );
+      }
     } catch (e) {
       setState(() {
         errorMessage = 'Error: Credenciales inválidas.';

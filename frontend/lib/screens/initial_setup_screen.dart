@@ -18,28 +18,35 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
   String errorMessage = '';
 
   Future<void> saveData() async {
+  setState(() {
+    isLoading = true;
+    errorMessage = '';
+  });
+
+  try {
+    await ApiService().updateUserData(
+      token: widget.token,
+      weight: double.tryParse(weightController.text),
+      height: double.tryParse(heightController.text),
+      goal: goalController.text,
+    );
+
+    // Navegación 
+    Navigator.pushReplacementNamed(
+      context,
+      '/home',
+      arguments: widget.token, // Pasar el token como argumento
+    );
+
+  } catch (e) {
     setState(() {
-      isLoading = true;
-      errorMessage = '';
+      errorMessage = 'Error al guardar datos: $e';
     });
-
-    try {
-      await ApiService().updateUserData(
-        token: widget.token,
-        weight: double.tryParse(weightController.text),
-        height: double.tryParse(heightController.text),
-        goal: goalController.text,
-      );
-
-      Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Error al guardar datos: $e';
-      });
-    } finally {
-      setState(() => isLoading = false);
-    }
+  } finally {
+    setState(() => isLoading = false);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
