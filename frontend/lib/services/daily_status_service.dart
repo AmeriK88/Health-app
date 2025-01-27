@@ -9,6 +9,13 @@ Future<void> registerDailyStatus(String token, Map<String, dynamic> data) async 
   final url = Uri.parse(baseUrl);
 
   try {
+    if (!data.containsKey('energy_level') || data['energy_level'] == null) {
+      throw Exception('Nivel de energía no especificado.');
+    }
+    if (!data.containsKey('mood') || data['mood'] == null) {
+      throw Exception('Estado de ánimo no especificado.');
+    }
+
     final response = await http.post(
       url,
       headers: {

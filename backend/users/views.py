@@ -4,6 +4,8 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from daily_status.models import DailyStatus  # Importar el modelo DailyStatus
+from daily_status.serializers import DailyStatusSerializer  # Importar el serializer de DailyStatus
 from .models import CustomUser
 from .serializers import UserSerializer
 
@@ -36,6 +38,11 @@ class UserDashboardView(APIView):
     def get(self, request):
         user = request.user
         try:
+            # Obtenemos los estados diarios del usuario
+            daily_statuses = DailyStatus.objects.filter(user=user).order_by('-date')
+            daily_statuses_serialized = DailyStatusSerializer(daily_statuses, many=True).data
+
+            # Datos del usuario
             data = {
                 "username": user.username,
                 "age": user.age,
@@ -45,6 +52,7 @@ class UserDashboardView(APIView):
                 "goal": user.goal,
                 "avatar": user.avatar.url if user.avatar else None,
                 "physical_state": user.calculate_physical_state(),
+                "daily_statuses": daily_statuses_serialized,  # Añadimos estados diarios
             }
             logger.info(f"Datos del dashboard obtenidos para {user.username}")
             return Response(data, status=status.HTTP_200_OK)
@@ -54,17 +62,15 @@ class UserDashboardView(APIView):
                 {"error": "No se pudieron obtener los datos del usuario."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        
+
     def put(self, request):
         user = request.user
         data = request.data
 
-        # Actualizamos los datos del usuario si están presentes en la solicitud
         user.weight = data.get('weight', user.weight)
         user.height = data.get('height', user.height)
         user.goal = data.get('goal', user.goal)
 
-        # Si hay un archivo 'avatar', lo actualizamos
         if 'avatar' in request.FILES:
             user.avatar = request.FILES['avatar']
 

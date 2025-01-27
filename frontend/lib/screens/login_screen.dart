@@ -24,20 +24,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMessage = '';
   bool isLoading = false;
 
-  void login() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
-
+  /// Redirige al usuario dependiendo de si tiene un estado diario registrado para hoy
+  Future<void> handleRedirection(String token) async {
     try {
-      // Llama a la API para autenticar y obtener el token
-      final token = await apiService.login(
-        usernameController.text,
-        passwordController.text,
-      );
-
-      // Verifica si ya tiene un estado registrado para hoy
       final todayStatuses = await fetchDailyStatuses(token);
 
       final bool hasTodayStatus = todayStatuses.any((status) {
@@ -48,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
             statusDate.day == now.day;
       });
 
-      // Redirige al usuario dependiendo de si tiene un estado registrado
       if (hasTodayStatus) {
         Navigator.pushReplacement(
           context,
@@ -62,7 +50,35 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Error: Credenciales inválidas.';
+        errorMessage = 'Error al verificar estados diarios: $e';
+      });
+    }
+  }
+
+  /// Lógica de inicio de sesión
+  /// Lógica de inicio de sesión
+  void login() async {
+    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+      setState(() {
+        errorMessage = 'Por favor, completa todos los campos.';
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
+    try {
+      final token = await apiService.login(
+        usernameController.text,
+        passwordController.text,
+      );
+      await handleRedirection(token);
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al iniciar sesión: ${e.toString()}';
       });
     } finally {
       setState(() {

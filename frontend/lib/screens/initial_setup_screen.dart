@@ -18,66 +18,98 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
   String errorMessage = '';
 
   Future<void> saveData() async {
-  setState(() {
-    isLoading = true;
-    errorMessage = '';
-  });
+    if (weightController.text.isEmpty ||
+        heightController.text.isEmpty ||
+        goalController.text.isEmpty) {
+      setState(() {
+        errorMessage = 'Todos los campos son obligatorios.';
+      });
+      return;
+    }
 
-  try {
-    await ApiService().updateUserData(
-      token: widget.token,
-      weight: double.tryParse(weightController.text),
-      height: double.tryParse(heightController.text),
-      goal: goalController.text,
-    );
-
-    // Navegación 
-    Navigator.pushReplacementNamed(
-      context,
-      '/home',
-      arguments: widget.token, // Pasar el token como argumento
-    );
-
-  } catch (e) {
     setState(() {
-      errorMessage = 'Error al guardar datos: $e';
+      isLoading = true;
+      errorMessage = '';
     });
-  } finally {
-    setState(() => isLoading = false);
-  }
-}
 
+    try {
+      await ApiService().updateUserData(
+        token: widget.token,
+        weight: double.tryParse(weightController.text),
+        height: double.tryParse(heightController.text),
+        goal: goalController.text,
+      );
+
+      Navigator.pushReplacementNamed(
+        context,
+        '/home',
+        arguments: widget.token,
+      );
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al guardar datos: $e';
+      });
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Configuración Inicial')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (errorMessage.isNotEmpty)
-              Text(errorMessage, style: const TextStyle(color: Colors.red)),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  errorMessage,
+                  style: const TextStyle(color: Colors.red, fontSize: 14),
+                ),
+              ),
+            const Text(
+              'Completa los datos iniciales:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: weightController,
-              decoration: const InputDecoration(labelText: 'Peso (kg)'),
+              decoration: const InputDecoration(
+                labelText: 'Peso (kg)',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: heightController,
-              decoration: const InputDecoration(labelText: 'Altura (cm)'),
+              decoration: const InputDecoration(
+                labelText: 'Altura (cm)',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: goalController,
-              decoration: const InputDecoration(labelText: 'Objetivo'),
+              decoration: const InputDecoration(
+                labelText: 'Objetivo',
+                border: OutlineInputBorder(),
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: saveData,
-              child: isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Guardar'),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: saveData,
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Guardar'),
+              ),
             ),
           ],
         ),

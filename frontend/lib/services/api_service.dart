@@ -6,7 +6,12 @@ import 'package:path/path.dart' as p;
 class ApiService {
   final String baseUrl = 'http://127.0.0.1:8000/api/users/';
 
-  // Registro de usuario con posibilidad de enviar avatar
+  Future<void> _handleError(http.Response response) async {
+    if (response.statusCode >= 400) {
+      throw Exception('Error: ${response.statusCode} - ${response.body}');
+    }
+  }
+
   Future<void> registerUser({
     required String username,
     required String email,
@@ -16,22 +21,21 @@ class ApiService {
     double? weight,
     double? height,
     String? goal,
-    File? avatar, // Archivo de imagen opcional
+    File? avatar,
   }) async {
     var uri = Uri.parse('${baseUrl}register/');
     var request = http.MultipartRequest('POST', uri);
 
-    // Campos normales
     request.fields['username'] = username;
     request.fields['email'] = email;
     request.fields['password'] = password;
     request.fields['age'] = age.toString();
     request.fields['bio'] = bio;
+
     if (weight != null) request.fields['weight'] = weight.toString();
     if (height != null) request.fields['height'] = height.toString();
     if (goal != null) request.fields['goal'] = goal;
 
-    // Archivo (opcional)
     if (avatar != null) {
       final fileName = p.basename(avatar.path);
       request.files.add(await http.MultipartFile.fromPath(
@@ -41,7 +45,6 @@ class ApiService {
       ));
     }
 
-    // Enviar la solicitud
     var streamedResponse = await request.send();
     final responseBody = await streamedResponse.stream.bytesToString();
 
@@ -50,7 +53,6 @@ class ApiService {
     }
   }
 
-  // Login de usuario
   Future<String> login(String username, String password) async {
     final response = await http.post(
       Uri.parse('${baseUrl}token/'),
@@ -60,48 +62,37 @@ class ApiService {
       },
     );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['access']; // Devuelve el token de acceso
-    } else {
-      throw Exception('Error al iniciar sesión: ${response.body}');
-    }
+    await _handleError(response);
+    final data = jsonDecode(response.body);
+    return data['access'];
   }
 
-  // Obtener datos del dashboard
   Future<Map<String, dynamic>> getDashboard(String token) async {
     final response = await http.get(
       Uri.parse('${baseUrl}dashboard/'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Error al obtener el dashboard: ${response.body}');
-    }
+    await _handleError(response);
+    return jsonDecode(response.body);
   }
 
-  // Actualizar datos del usuario
   Future<void> updateUserData({
     required String token,
     double? weight,
     double? height,
     String? goal,
-    File? avatar, // Posibilidad de actualizar avatar
+    File? avatar,
   }) async {
     var uri = Uri.parse('${baseUrl}dashboard/');
     var request = http.MultipartRequest('PUT', uri);
 
-    // Agregar token en los headers
     request.headers['Authorization'] = 'Bearer $token';
 
-    // Campos opcionales
     if (weight != null) request.fields['weight'] = weight.toString();
     if (height != null) request.fields['height'] = height.toString();
     if (goal != null) request.fields['goal'] = goal;
 
-    // Archivo (opcional)
     if (avatar != null) {
       final fileName = p.basename(avatar.path);
       request.files.add(await http.MultipartFile.fromPath(
@@ -111,7 +102,6 @@ class ApiService {
       ));
     }
 
-    // Enviar la solicitud
     var streamedResponse = await request.send();
     final responseBody = await streamedResponse.stream.bytesToString();
 

@@ -2,11 +2,11 @@ from rest_framework import serializers
 from .models import DailyStatus
 
 class DailyStatusSerializer(serializers.ModelSerializer):
-    recommendation = serializers.SerializerMethodField()  # Campo para recomendaciones
+    recommendation = serializers.SerializerMethodField()
 
     class Meta:
         model = DailyStatus
-        fields = ['id', 'date', 'energy_level', 'pain', 'tiredness', 'mood', 'notes', 'recommendation']
+        fields = ['id', 'date', 'energy_level', 'has_pain', 'is_tired', 'mood', 'notes', 'recommendation']
 
     def get_recommendation(self, obj):
         return obj.recommend_exercises()
