@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+
+// 1. Importa Provider y tu DailyStatusNotifier
+import 'package:provider/provider.dart';
+import '../providers/daily_status_notifier.dart';
+
 import '../services/api_service.dart';
 import '../services/daily_status_service.dart';
 import 'register_screen.dart';
@@ -69,11 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
+      // 2. Obtenemos el token real del backend
       final token = await apiService.login(
         usernameController.text,
         passwordController.text,
       );
+
+      // 3. Asignamos ese token al DailyStatusNotifier (para que el Bearer sea correcto)
+      context.read<DailyStatusNotifier>().setToken(token);
+
+      // 4. Después, continuamos con la redirección habitual
       await handleRedirection(token);
+
     } catch (e) {
       setState(() {
         errorMessage = 'Error al iniciar sesión: ${e.toString()}';

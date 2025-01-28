@@ -7,6 +7,7 @@ import 'daily_status_screen.dart';
 import 'initial_setup_screen.dart';
 import '../utils/styles.dart';
 import '../widgets/custom_button.dart';
+import 'chat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -63,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   double calculateProgress(Map<String, dynamic> dailyStatus) {
     double progress = 0.0;
-
     // Calcular puntos para nivel de energía
     switch (dailyStatus['energy_level']) {
       case 'low':
@@ -76,17 +76,14 @@ class _HomeScreenState extends State<HomeScreen> {
         progress += 25;
         break;
     }
-
     // Calcular puntos para dolor
     if (dailyStatus['has_pain'] == false) {
       progress += 25; // Sin dolor
     }
-
     // Calcular puntos para cansancio
     if (dailyStatus['is_tired'] == false) {
       progress += 25; // No está cansado
     }
-
     // Calcular puntos para estado de ánimo
     switch (dailyStatus['mood']) {
       case 'mal':
@@ -104,8 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void showRecommendationSnackBar(Map<String, dynamic> dailyStatus) {
-    final recommendation =
-        dailyStatus['recommendation'] ?? 'Sin recomendaciones.';
+    final recommendation = dailyStatus['recommendation'] ?? 'Sin recomendaciones.';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(recommendation),
@@ -170,10 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 if (userData?['avatar'] != null)
                                   CircleAvatar(
                                     radius: 50,
-                                    backgroundImage: NetworkImage(userData!['avatar']),
+                                    backgroundImage:
+                                        NetworkImage(userData!['avatar']),
                                     onBackgroundImageError: (_, __) {
                                       setState(() {
-                                        errorMessage = 'Error al cargar la imagen del avatar.';
+                                        errorMessage =
+                                            'Error al cargar la imagen del avatar.';
                                       });
                                     },
                                   )
@@ -181,15 +179,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const CircleAvatar(
                                     radius: 50,
                                     backgroundColor: Colors.grey,
-                                    child: Icon(Icons.person, size: 50, color: Colors.white),
+                                    child: Icon(Icons.person,
+                                        size: 50, color: Colors.white),
                                   ),
                                 const SizedBox(height: 10),
-                                Text('Usuario: ${userData?['username']}', style: const TextStyle(fontSize: 16)),
-                                Text('Edad: ${userData?['age'] ?? "No especificada"} años', style: const TextStyle(fontSize: 16)),
-                                Text('Bio: ${userData?['bio'] ?? "No disponible"}', style: const TextStyle(fontSize: 16)),
-                                Text('Peso: ${userData?['weight']} kg', style: const TextStyle(fontSize: 16)),
-                                Text('Altura: ${userData?['height']} cm', style: const TextStyle(fontSize: 16)),
-                                Text('Objetivo: ${userData?['goal'] ?? "No especificado"}', style: const TextStyle(fontSize: 16)),
+                                Text('Usuario: ${userData?['username']}',
+                                    style: const TextStyle(fontSize: 16)),
+                                Text(
+                                    'Edad: ${userData?['age'] ?? "No especificada"} años',
+                                    style: const TextStyle(fontSize: 16)),
+                                Text('Bio: ${userData?['bio'] ?? "No disponible"}',
+                                    style: const TextStyle(fontSize: 16)),
+                                Text('Peso: ${userData?['weight']} kg',
+                                    style: const TextStyle(fontSize: 16)),
+                                Text('Altura: ${userData?['height']} cm',
+                                    style: const TextStyle(fontSize: 16)),
+                                Text(
+                                    'Objetivo: ${userData?['goal'] ?? "No especificado"}',
+                                    style: const TextStyle(fontSize: 16)),
                                 const SizedBox(height: 10),
                                 Text(
                                   'Estado Físico: ${userData?['physical_state']}',
@@ -205,7 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => InitialSetupScreen(token: widget.token),
+                                builder: (context) =>
+                                    InitialSetupScreen(token: widget.token),
                               ),
                             ).then((_) => fetchUserData());
                           },
@@ -245,11 +253,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         const SizedBox(height: 10),
                                         LinearProgressIndicator(
-                                          value: calculateProgress(status) / 100, // Normaliza a 0-1
+                                          value: calculateProgress(status) / 100,
                                           backgroundColor: Colors.grey[300],
                                           color: calculateProgress(status) == 100
-                                              ? Colors.green // Verde si es 100%
-                                              : Colors.blue, // Azul para progreso parcial
+                                              ? Colors.green
+                                              : Colors.blue,
                                           minHeight: 8,
                                         ),
                                         const SizedBox(height: 10),
@@ -264,7 +272,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 trailing: IconButton(
                                   icon: const Icon(Icons.info_outline),
                                   color: AppStyles.primaryColor,
-                                  onPressed: () => showRecommendationSnackBar(status),
+                                  onPressed: () =>
+                                      showRecommendationSnackBar(status),
                                 ),
                               ),
                             );
@@ -281,7 +290,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DailyStatusScreen(token: widget.token),
+                                builder: (context) =>
+                                    DailyStatusScreen(token: widget.token),
                               ),
                             ).then((_) => fetchUserData());
                           },
@@ -290,6 +300,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+      ),
+      // <--- AQUÍ PONEMOS EL BOTÓN FLOTANTE ---
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          
+          Navigator.push(
+             context,
+             MaterialPageRoute(builder: (context) => const ChatScreen()),
+           );
+        },
+        child: const Icon(Icons.chat),
       ),
     );
   }

@@ -18,4 +18,5 @@ __pycache__/
 dist/
 build/
 
+# Media files
 media/

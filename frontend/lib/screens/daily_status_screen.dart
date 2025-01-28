@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/daily_status_service.dart';
+// 1. Importar Provider para usar context.read() y context.watch()
+import 'package:provider/provider.dart';
+
+import '../providers/daily_status_notifier.dart';
 import '../utils/styles.dart';
 import 'home_screen.dart';
 
@@ -18,7 +21,6 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
   final TextEditingController notesController = TextEditingController();
   bool pain = false;
   bool tiredness = false;
-  bool isLoading = false;
 
   final List<Map<String, String>> energyLevels = [
     {'key': 'low', 'label': 'Bajo'},
@@ -32,7 +34,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
     {'key': 'good', 'label': 'Bien'},
   ];
 
-  void saveStatus(BuildContext context) async {
+  Future<void> saveStatus(BuildContext context) async {
     if (selectedEnergyLevel == null || selectedMood == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -42,11 +44,8 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
-
-    Map<String, dynamic> data = {
+    // Preparar data
+    final Map<String, dynamic> data = {
       'energy_level': selectedEnergyLevel,
       'has_pain': pain,
       'is_tired': tiredness,
@@ -54,8 +53,18 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
       'notes': notesController.text.trim(),
     };
 
-    try {
-      await registerDailyStatus(widget.token, data);
+    // 2. En lugar de llamar a registerDailyStatus(...),
+    //    usamos el método del notifier.
+    await context.read<DailyStatusNotifier>().registerDailyStatusToApi(data);
+
+    // 3. Revisamos si hubo error
+    final errorMessage = context.read<DailyStatusNotifier>().errorMessage;
+    if (errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar estado: $errorMessage')),
+      );
+    } else {
+      // Éxito
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Estado guardado con éxito')),
       );
@@ -65,19 +74,15 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
           builder: (context) => HomeScreen(token: widget.token),
         ),
       );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al guardar estado: $e')),
-      );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // 4. Escuchamos si el notifier está en loading
+    final dsNotifier = context.watch<DailyStatusNotifier>();
+    final isLoading = dsNotifier.isLoading;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar Estado Diario'),
@@ -171,6 +176,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                // Deshabilitamos el botón si isLoading = true
                 onPressed: isLoading ? null : () => saveStatus(context),
                 style: AppStyles.primaryButtonStyle,
                 child: isLoading
