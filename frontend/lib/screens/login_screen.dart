@@ -62,9 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+      // Establecer error y mostrar SnackBar
+      final error = 'Por favor, completa todos los campos.';
       setState(() {
-        errorMessage = 'Por favor, completa todos los campos.';
+        errorMessage = error;
       });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
       return;
     }
 
@@ -74,28 +77,36 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // 2. Obtenemos el token real del backend
+      // Llama al login y obtiene el token
       final token = await apiService.login(
         usernameController.text,
         passwordController.text,
       );
 
-      // 3. Asignamos ese token al DailyStatusNotifier (para que el Bearer sea correcto)
-      context.read<DailyStatusNotifier>().setToken(token);
+      // Muestra mensaje de éxito
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inicio de sesión exitoso')),
+      );
 
-      // 4. Después, continuamos con la redirección habitual
-      await handleRedirection(token);
-
+      // Redirige al Home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen(token: token)),
+      );
     } catch (e) {
+      // Manejo de errores
+      final error = 'Error al iniciar sesión: $e';
       setState(() {
-        errorMessage = 'Error al iniciar sesión: ${e.toString()}';
+        errorMessage = error;
       });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     } finally {
       setState(() {
         isLoading = false;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

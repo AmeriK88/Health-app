@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../utils/styles.dart';
+import '../widgets/custom_button.dart'; // Asegúrate de importar CustomButton aquí
 
 class InitialSetupScreen extends StatefulWidget {
   final String token;
@@ -25,6 +26,12 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
       setState(() {
         errorMessage = 'Todos los campos son obligatorios.';
       });
+
+      if (errorMessage.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
       return;
     }
 
@@ -41,6 +48,10 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
         goal: goalController.text,
       );
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Datos guardados con éxito')),
+      );
+
       Navigator.pushReplacementNamed(
         context,
         '/home',
@@ -50,6 +61,12 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
       setState(() {
         errorMessage = 'Error al guardar datos: $e';
       });
+
+      if (errorMessage.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     } finally {
       setState(() => isLoading = false);
     }
@@ -106,15 +123,10 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: saveData,
-                style: AppStyles.primaryButtonStyle,
-                child: isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Guardar'),
-              ),
+            CustomButton(
+              text: 'Guardar', // Usa la propiedad `text` de CustomButton
+              onPressed: saveData,
+              isLoading: isLoading,
             ),
           ],
         ),

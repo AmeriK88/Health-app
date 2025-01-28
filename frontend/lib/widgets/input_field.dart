@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/styles.dart';
 
 class InputField extends StatelessWidget {
   final TextEditingController controller;
@@ -22,13 +23,7 @@ class InputField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
+      decoration: AppStyles.inputDecoration(label, icon),
     );
   }
 }

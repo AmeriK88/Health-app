@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../providers/daily_status_notifier.dart';
 import '../utils/styles.dart';
 import 'home_screen.dart';
+import '../widgets/custom_button.dart';
+
 
 class DailyStatusScreen extends StatefulWidget {
   final String token;
@@ -175,15 +177,10 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                // Deshabilitamos el botón si isLoading = true
-                onPressed: isLoading ? null : () => saveStatus(context),
-                style: AppStyles.primaryButtonStyle,
-                child: isLoading
-                    ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                    : const Text('Guardar Estado'),
+              CustomButton(
+                text: 'Guardar Estado',
+                onPressed: () => saveStatus(context),
+                isLoading: isLoading,
               ),
             ],
           ),

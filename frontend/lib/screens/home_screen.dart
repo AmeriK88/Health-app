@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ).then((_) => fetchUserData());
                           },
-                          color: AppStyles.primaryColor,
+                          style: AppStyles.primaryButtonStyle,
                         ),
 
                         const SizedBox(height: 20),
@@ -295,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ).then((_) => fetchUserData());
                           },
-                          color: AppStyles.primaryColor,
+                          style: AppStyles.primaryButtonStyle,
                         ),
                       ],
                     ),

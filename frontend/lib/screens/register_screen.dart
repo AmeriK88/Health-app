@@ -88,7 +88,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // Función para registrar al usuario
   void register() async {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      if (errorMessage.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -111,11 +118,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       Navigator.pop(context); // Regresa al login
     } catch (e) {
-      setState(() => errorMessage = 'Error al registrar usuario: $e');
+      setState(() {
+        errorMessage = 'Error al registrar usuario: $e';
+      });
+
+      if (errorMessage.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     } finally {
       setState(() => isLoading = false);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -184,17 +200,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Vista previa del avatar seleccionado
                     if (avatarBytes != null)
                       CircleAvatar(
-                        radius: 50,
+                        radius: AppStyles.avatarRadius, // Usa una constante centralizada
                         backgroundImage: MemoryImage(avatarBytes!),
                       )
                     else if (avatarFile != null)
                       CircleAvatar(
-                        radius: 50,
+                        radius: AppStyles.avatarRadius, // Usa una constante centralizada
                         backgroundImage: FileImage(avatarFile!),
                       )
                     else
                       const CircleAvatar(
-                        radius: 50,
+                        radius: AppStyles.avatarRadius, // Usa una constante centralizada
                         backgroundColor: Colors.grey,
                         child: Icon(Icons.person, size: 50, color: Colors.white),
                       ),
