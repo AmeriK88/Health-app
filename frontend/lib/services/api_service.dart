@@ -76,8 +76,12 @@ class ApiService {
     );
 
     await _handleError(response);
-    return jsonDecode(response.body);
+
+    // Decodificar los bytes como UTF-8 y luego convertir el JSON
+    final decoded = utf8.decode(response.bodyBytes);
+    return jsonDecode(decoded);
   }
+
 
   Future<void> updateUserData({
     required String token,

@@ -1,13 +1,13 @@
-# users/views.py
 import logging
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from daily_status.models import DailyStatus  # Importar el modelo DailyStatus
-from daily_status.serializers import DailyStatusSerializer  # Importar el serializer de DailyStatus
+from daily_status.models import DailyStatus  
+from daily_status.serializers import DailyStatusSerializer  
 from .models import CustomUser
 from .serializers import UserSerializer
+from django.http import JsonResponse
 
 logger = logging.getLogger('django')
 
@@ -32,6 +32,8 @@ class RegisterView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
+
 class UserDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -52,15 +54,17 @@ class UserDashboardView(APIView):
                 "goal": user.goal,
                 "avatar": request.build_absolute_uri(user.avatar.url) if user.avatar else None,
                 "physical_state": user.calculate_physical_state(),
-                "daily_statuses": daily_statuses_serialized,  # Añadimos estados diarios
+                "daily_statuses": daily_statuses_serialized, 
             }
             logger.info(f"Datos del dashboard obtenidos para {user.username}")
-            return Response(data, status=status.HTTP_200_OK)
+            # Aseguramos que los caracteres especiales se gestionen correctamente
+            return JsonResponse(data, json_dumps_params={'ensure_ascii': False}, status=200)
         except Exception as e:
             logger.error(f"Error al obtener datos del dashboard para {user.username}: {str(e)}")
-            return Response(
+            return JsonResponse(
                 {"error": "No se pudieron obtener los datos del usuario."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                json_dumps_params={'ensure_ascii': False},
+                status=500,
             )
 
     def put(self, request):
@@ -76,7 +80,9 @@ class UserDashboardView(APIView):
 
         user.save()
         logger.info(f"Datos actualizados para {user.username}")
-        return Response(
+        return JsonResponse(
             {"message": "Datos actualizados con éxito"},
-            status=status.HTTP_200_OK,
+            json_dumps_params={'ensure_ascii': False},
+            status=200,
         )
+
