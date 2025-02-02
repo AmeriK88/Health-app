@@ -2,25 +2,6 @@
 
 ## **1. Configuración Inicial**
 
-### **a. Otorgar Acceso al Repositorio**
-
-1. **Invitar como Colaborador:**
-   - Navega a tu repositorio en GitHub.
-   - Ve a la pestaña **Settings** (Configuración).
-   - Selecciona **Manage access** (Gestionar acceso) en el menú lateral.
-   - Haz clic en **Invite a collaborator** (Invitar a un colaborador).
-   - Introduce el nombre de usuario de GitHub de tu compañero y envía la invitación.
-   - **Nota:** Tu compañero deberá aceptar la invitación para obtener acceso.
-
-### **b. Configurar Git en la Máquina del Colaborador**
-
-1. **Instalar Git:**
-   - [Descargar Git](https://git-scm.com/downloads) e instálalo según tu sistema operativo.
-
-2. **Configurar Git:**
-   ```bash
-   git config --global user.name "Nombre de Usuario"
-   git config --global user.email "correo@ejemplo.com"
    ```
 
 ### **c. Clonar el Repositorio**
@@ -41,7 +22,7 @@
 
 ### **a. Ramas Principales**
 
-- `main`: Código en producción. Siempre estable y listo para desplegar.
+- `main`: Código en producción. Siempre estable y listo para desplegar. NUNCA TOCAR NI HACER MODIFICACIONES
 - `development`: Código en desarrollo. Integración de nuevas funcionalidades antes de pasar a `main`.
 
 ### **b. Ramas de Características (Feature Branches)**
@@ -51,6 +32,8 @@
 ### **c. Flujo de Trabajo Recomendado**
 
 1. **Crear una Rama de Característica:**
+   - Ir a la rama desarrollo y crear nueva rama + nombre de nueva funcionalidad
+
    ```bash
    git checkout development
    git pull origin development
@@ -64,6 +47,7 @@
    ```
 
 3. **Sincronizar con `development`:**
+   - Antes de hacer un merge, volver a development. Hacer pull de la rama en origen por posbiles cambios existentes. Finalmente hacemos merge
    ```bash
    git checkout development
    git pull origin development
@@ -90,16 +74,6 @@
    git push origin --delete feature/nueva-funcionalidad
    ```
 
-### **d. Integración con `main`**
-
-1. **Preparar para Desplegar:**
-   - Asegúrate de que todas las funcionalidades en `development` estén probadas y estables.
-
-2. **Crear un Pull Request hacia `main`:**
-   - Similar al paso anterior, pero esta vez el PR es desde `development` hacia `main`.
-
-3. **Fusionar y Desplegar:**
-   - Fusiona el PR en `main` y procede con el despliegue a producción.
 
 ## **3. Mejores Prácticas para la Colaboración**
 
@@ -119,30 +93,9 @@
 - **Crear Issues para Tareas y Bugs:** Rastrea tareas, funcionalidades y errores.
 - **Asignar Issues:** Asigna tareas específicas a cada colaborador.
 
-### **d. Documentación**
-
-- **Mantener un `README.md` Actualizado:** Incluir instrucciones de instalación y uso.
-- **Documentar Funcionalidades y Arquitectura:** Explica la estructura del proyecto.
-
-### **e. Uso de GitHub Actions y Automatizaciones (Opcional)**
-
-- **Integrar CI/CD:** Configura GitHub Actions para pruebas automáticas.
-- **Automatizar Revisiones de Código:** Usa ESLint, Prettier o SonarQube.
 
 ## **4. Flujo de Trabajo Ejemplo**
 
-1. **Planificación:**
-   - Crear un Issue para una nueva funcionalidad o bug.
-   - Asignar el Issue a un desarrollador.
-
-2. **Desarrollo:**
-   ```bash
-   git checkout development
-   git pull origin development
-   git checkout -b feature/nueva-funcionalidad
-   git add .
-   git commit -m "Implementar nueva funcionalidad X"
-   ```
 
 3. **Revisión:**
    ```bash
