@@ -18,6 +18,7 @@ class DailyStatusNotifier extends ChangeNotifier {
   // Método para cambiar el token después de hacer login
   void setToken(String newToken) {
     _token = newToken;
+    print('Token actualizado en DailyStatusNotifier: $_token');
     // Normalmente no hay que llamar notifyListeners() 
     // si solo actualizamos el token y no depende la UI,
     // pero no hace daño si quieres asegurarte de que cambie algo en la UI.
