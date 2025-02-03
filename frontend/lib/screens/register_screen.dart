@@ -19,25 +19,29 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final ApiService apiService = ApiService();
 
-  // Controladores
+  // Controladores de texto
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController emailConfirmController = TextEditingController(); // Nuevo
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordConfirmController = TextEditingController(); // Nuevo
   final TextEditingController ageController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
 
-  File? avatarFile; // Archivo para móviles
-  Uint8List? avatarBytes; // Bytes para Flutter Web
+  File? avatarFile;
+  Uint8List? avatarBytes;
   final ImagePicker _picker = ImagePicker();
 
   bool isLoading = false;
   String errorMessage = '';
 
-  // Validaciones
+  // Agregar aquí la función de validación
   bool validateForm() {
     if (usernameController.text.isEmpty ||
         emailController.text.isEmpty ||
+        emailConfirmController.text.isEmpty ||
         passwordController.text.isEmpty ||
+        passwordConfirmController.text.isEmpty ||
         ageController.text.isEmpty ||
         bioController.text.isEmpty) {
       setState(() => errorMessage = 'Todos los campos son obligatorios.');
@@ -49,18 +53,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return false;
     }
 
+    if (emailController.text != emailConfirmController.text) {
+      setState(() => errorMessage = 'Los correos electrónicos no coinciden.');
+      return false;
+    }
+
     if (int.tryParse(ageController.text) == null) {
       setState(() => errorMessage = 'Edad debe ser un número.');
       return false;
     }
 
     if (passwordController.text.length < 6) {
-      setState(() => errorMessage = 'Contraseña debe tener al menos 6 caracteres.');
+      setState(() => errorMessage = 'La contraseña debe tener al menos 6 caracteres.');
+      return false;
+    }
+
+    if (passwordController.text != passwordConfirmController.text) {
+      setState(() => errorMessage = 'Las contraseñas no coinciden.');
       return false;
     }
 
     return true;
   }
+
 
   // Seleccionar avatar
   Future<void> pickAvatar() async {
@@ -106,7 +121,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await apiService.registerUser(
         username: usernameController.text,
         email: emailController.text,
+        emailConfirm: emailConfirmController.text, 
         password: passwordController.text,
+        passwordConfirm: passwordConfirmController.text, 
         age: int.parse(ageController.text),
         bio: bioController.text,
         avatarFile: avatarFile,
@@ -159,6 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ErrorMessage(message: errorMessage),
                     const SizedBox(height: 10),
 
+                    // Usuario
                     InputField(
                       controller: usernameController,
                       label: 'Usuario',
@@ -166,6 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
 
+                    // Correo Electrónico
                     InputField(
                       controller: emailController,
                       label: 'Correo Electrónico',
@@ -174,6 +193,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
 
+                    // Confirmar Correo Electrónico
+                    InputField(
+                      controller: emailConfirmController, // Nuevo campo
+                      label: 'Confirmar Correo Electrónico',
+                      icon: Icons.email,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Contraseña
                     InputField(
                       controller: passwordController,
                       label: 'Contraseña',
@@ -182,6 +211,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
 
+                    // Confirmar Contraseña
+                    InputField(
+                      controller: passwordConfirmController,
+                      label: 'Confirmar Contraseña',
+                      icon: Icons.lock,
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Edad
                     InputField(
                       controller: ageController,
                       label: 'Edad',
@@ -190,6 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
 
+                    // Biografía
                     InputField(
                       controller: bioController,
                       label: 'Biografía',
@@ -200,17 +240,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Vista previa del avatar seleccionado
                     if (avatarBytes != null)
                       CircleAvatar(
-                        radius: AppStyles.avatarRadius, // Usa una constante centralizada
+                        radius: AppStyles.avatarRadius,
                         backgroundImage: MemoryImage(avatarBytes!),
                       )
                     else if (avatarFile != null)
                       CircleAvatar(
-                        radius: AppStyles.avatarRadius, // Usa una constante centralizada
+                        radius: AppStyles.avatarRadius,
                         backgroundImage: FileImage(avatarFile!),
                       )
                     else
                       const CircleAvatar(
-                        radius: AppStyles.avatarRadius, // Usa una constante centralizada
+                        radius: AppStyles.avatarRadius,
                         backgroundColor: Colors.grey,
                         child: Icon(Icons.person, size: 50, color: Colors.white),
                       ),
@@ -219,6 +259,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: const Text('Seleccionar Avatar'),
                     ),
 
+                    // Botón de registro
                     CustomButton(
                       text: 'Registrar',
                       onPressed: register,
@@ -234,3 +275,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+

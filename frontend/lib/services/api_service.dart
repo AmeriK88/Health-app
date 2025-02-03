@@ -16,7 +16,9 @@ class ApiService {
   Future<void> registerUser({
     required String username,
     required String email,
+    required String emailConfirm,
     required String password,
+    required String passwordConfirm,
     required int age,
     required String bio,
     File? avatarFile,
@@ -27,7 +29,9 @@ class ApiService {
 
     request.fields['username'] = username;
     request.fields['email'] = email;
+    request.fields['email_confirm'] = emailConfirm; // Nuevo campo
     request.fields['password'] = password;
+    request.fields['password_confirm'] = passwordConfirm; // Nuevo campo
     request.fields['age'] = age.toString();
     request.fields['bio'] = bio;
 
@@ -53,6 +57,7 @@ class ApiService {
       throw Exception('Error al registrar el usuario: $responseBody');
     }
   }
+
 
 
   Future<String> login(String username, String password) async {
