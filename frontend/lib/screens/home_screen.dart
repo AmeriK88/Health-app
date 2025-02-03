@@ -33,6 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchUserData() async {
     try {
       final data = await ApiService().getDashboard(widget.token);
+
+      print("Datos recibidos del servidor: ${jsonEncode(data)}"); // Depuración
+
       final bool missingData = data['weight'] == null ||
           data['weight'] == 0 ||
           data['height'] == null ||
@@ -265,6 +268,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 style: AppStyles.headerTextStyle,
                                               ),
                                               const SizedBox(height: 10),
+
+                                               // Icono de recomendación dentro de la tarjeta del estado diario
+                                                Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.lightbulb, color: Colors.blueAccent),
+                                                    tooltip: "Ver recomendación",
+                                                    onPressed: () {
+                                                      final recommendation = status['recommendation'] ?? 'Sin recomendaciones.';
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(recommendation),
+                                                          duration: const Duration(seconds: 3),
+                                                          action: SnackBarAction(label: 'OK', onPressed: () {}),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
 
                                               // Barra de progreso
                                               LinearProgressIndicator(

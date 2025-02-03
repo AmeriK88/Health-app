@@ -1,4 +1,3 @@
-// lib/providers/chat_notifier.dart
 import 'package:flutter/material.dart';
 import '../services/chatgpt_service.dart';
 
@@ -13,7 +12,7 @@ class ChatNotifier extends ChangeNotifier {
   List<Map<String, String>> messages = [
     {
       "role": "system",
-      "content": "Eres un asistente personal de fitness..."
+      "content": "Soy tu asistente personal de fitness..."
     }
   ];
 
