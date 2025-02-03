@@ -130,7 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        decoration: AppStyles.gradientBackground,
+        width: double.infinity,  // Expande el contenedor al ancho total
+        decoration: AppStyles.gradientBackground, // Fondo con gradiente
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : errorMessage.isNotEmpty
@@ -140,178 +141,197 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: AppStyles.errorTextStyle,
                     ),
                   )
-                : SingleChildScrollView(
-                    padding: AppStyles.pagePadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Información del usuario
-                        Card(
-                          color: Colors.white.withOpacity(0.9),
-                          elevation: 8,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                : LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      return SingleChildScrollView(
+                        padding: AppStyles.pagePadding,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight, // Ocupa al menos la pantalla completa
                           ),
-                          child: Padding(
-                            padding: AppStyles.pagePadding,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Información del Usuario:',
-                                  style: AppStyles.headerTextStyle,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Tarjeta de información del usuario
+                              Card(
+                                color: Colors.white.withOpacity(0.9),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
-                                const SizedBox(height: 10),
-                                // Mostrar avatar del usuario
-                                if (userData?['avatar'] != null)
-                                  CircleAvatar(
-                                    radius: 50,
-                                    backgroundImage:
-                                        NetworkImage(userData!['avatar']),
-                                    onBackgroundImageError: (_, __) {
-                                      setState(() {
-                                        errorMessage =
-                                            'Error al cargar la imagen del avatar.';
-                                      });
-                                    },
-                                  )
-                                else
-                                  const CircleAvatar(
-                                    radius: 50,
-                                    backgroundColor: Colors.grey,
-                                    child: Icon(Icons.person,
-                                        size: 50, color: Colors.white),
-                                  ),
-                                const SizedBox(height: 10),
-                                Text('Usuario: ${userData?['username']}',
-                                    style: const TextStyle(fontSize: 16)),
-                                Text(
-                                    'Edad: ${userData?['age'] ?? "No especificada"} años',
-                                    style: const TextStyle(fontSize: 16)),
-                                Text('Bio: ${userData?['bio'] ?? "No disponible"}',
-                                    style: const TextStyle(fontSize: 16)),
-                                Text('Peso: ${userData?['weight']} kg',
-                                    style: const TextStyle(fontSize: 16)),
-                                Text('Altura: ${userData?['height']} cm',
-                                    style: const TextStyle(fontSize: 16)),
-                                Text(
-                                    'Objetivo: ${userData?['goal'] ?? "No especificado"}',
-                                    style: const TextStyle(fontSize: 16)),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'Estado Físico: ${userData?['physical_state']}',
-                                  style: AppStyles.headerTextStyle,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        CustomButton(
-                          text: 'Editar Información',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    InitialSetupScreen(token: widget.token),
-                              ),
-                            ).then((_) => fetchUserData());
-                          },
-                          style: AppStyles.primaryButtonStyle,
-                        ),
+                                child: Padding(
+                                  padding: AppStyles.pagePadding,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Información del Usuario:',
+                                        style: AppStyles.headerTextStyle,
+                                      ),
+                                      const SizedBox(height: 10),
 
-                        const SizedBox(height: 20),
-                        // Estados diarios
-                        if (dailyStatuses != null && dailyStatuses!.isNotEmpty)
-                          ...dailyStatuses!.map((status) {
-                            return Card(
-                              color: Colors.white.withOpacity(0.9),
-                              elevation: 8,
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  'Fecha: ${status['date']}',
-                                  style: AppStyles.headerTextStyle,
+                                      // Avatar del usuario
+                                      if (userData?['avatar'] != null)
+                                        CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage: NetworkImage(userData!['avatar']),
+                                          onBackgroundImageError: (_, __) {
+                                            setState(() {
+                                              errorMessage = 'Error al cargar la imagen del avatar.';
+                                            });
+                                          },
+                                        )
+                                      else
+                                        const CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: Colors.grey,
+                                          child: Icon(Icons.person, size: 50, color: Colors.white),
+                                        ),
+                                      const SizedBox(height: 10),
+
+                                      // Información del usuario
+                                      Text('Usuario: ${userData?['username']}', style: const TextStyle(fontSize: 16)),
+                                      Text('Edad: ${userData?['age'] ?? "No especificada"} años', style: const TextStyle(fontSize: 16)),
+                                      Text('Bio: ${userData?['bio'] ?? "No disponible"}', style: const TextStyle(fontSize: 16)),
+                                      Text('Peso: ${userData?['weight']} kg', style: const TextStyle(fontSize: 16)),
+                                      Text('Altura: ${userData?['height']} cm', style: const TextStyle(fontSize: 16)),
+                                      Text('Objetivo: ${userData?['goal'] ?? "No especificado"}', style: const TextStyle(fontSize: 16)),
+
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        'Estado Físico: ${userData?['physical_state']}',
+                                        style: AppStyles.headerTextStyle,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Energía: ${status['energy_level']}'),
-                                    Text('Estado de Ánimo: ${status['mood']}'),
-                                    Text('Dolor: ${status['has_pain'] ? 'Sí' : 'No'}'),
-                                    Text('Cansancio: ${status['is_tired'] ? 'Sí' : 'No'}'),
-                                    const SizedBox(height: 10),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Progreso Diario:',
-                                          style: AppStyles.headerTextStyle,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        LinearProgressIndicator(
-                                          value: calculateProgress(status) / 100,
-                                          backgroundColor: Colors.grey[300],
-                                          color: calculateProgress(status) == 100
-                                              ? Colors.green
-                                              : Colors.blue,
-                                          minHeight: 8,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          '${calculateProgress(status).toStringAsFixed(0)}% completado',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ],
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              // Botón para editar información
+                              CustomButton(
+                                text: 'Editar Información',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InitialSetupScreen(token: widget.token),
                                     ),
-                                  ],
-                                ),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.info_outline),
-                                  color: AppStyles.primaryColor,
-                                  onPressed: () =>
-                                      showRecommendationSnackBar(status),
-                                ),
+                                  ).then((_) {
+                                    setState(() {
+                                      fetchUserData();
+                                    });
+                                  });
+                                },
+                                style: AppStyles.primaryButtonStyle,
                               ),
-                            );
-                          }).toList()
-                        else
-                          const Text(
-                            'No hay estados diarios registrados.',
-                            style: AppStyles.errorTextStyle,
+
+                              const SizedBox(height: 20),
+
+                              // Estados diarios
+                              if (dailyStatuses != null && dailyStatuses!.isNotEmpty)
+                                ...dailyStatuses!.map((status) {
+                                  return Card(
+                                    color: Colors.white.withOpacity(0.9),
+                                    elevation: 8,
+                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: AppStyles.pagePadding,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Fecha: ${status['date']}',
+                                            style: AppStyles.headerTextStyle,
+                                          ),
+                                          const SizedBox(height: 10),
+
+                                          // Información del estado diario
+                                          Text('Energía: ${status['energy_level']}'),
+                                          Text('Estado de Ánimo: ${status['mood']}'),
+                                          Text('Dolor: ${status['has_pain'] ? 'Sí' : 'No'}'),
+                                          Text('Cansancio: ${status['is_tired'] ? 'Sí' : 'No'}'),
+
+                                          const SizedBox(height: 10),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Progreso Diario:',
+                                                style: AppStyles.headerTextStyle,
+                                              ),
+                                              const SizedBox(height: 10),
+
+                                              // Barra de progreso
+                                              LinearProgressIndicator(
+                                                value: calculateProgress(status) / 100,
+                                                backgroundColor: Colors.grey[300],
+                                                color: calculateProgress(status) == 100
+                                                    ? Colors.green
+                                                    : Colors.blue,
+                                                minHeight: 8,
+                                              ),
+                                              const SizedBox(height: 10),
+
+                                              Text(
+                                                '${calculateProgress(status).toStringAsFixed(0)}% completado',
+                                                style: const TextStyle(fontSize: 16),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList()
+                              else
+                                const Text(
+                                  'No hay estados diarios registrados.',
+                                  style: AppStyles.errorTextStyle,
+                                ),
+
+                              const SizedBox(height: 20),
+
+                              // Botón para registrar estado diario
+                              CustomButton(
+                                text: 'Registrar Estado Diario',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DailyStatusScreen(token: widget.token),
+                                    ),
+                                  ).then((_) {
+                                    setState(() {
+                                      fetchUserData();
+                                    });
+                                  });
+                                },
+                                style: AppStyles.primaryButtonStyle,
+                              ),
+                            ],
                           ),
-                        const SizedBox(height: 20),
-                        CustomButton(
-                          text: 'Registrar Estado Diario',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DailyStatusScreen(token: widget.token),
-                              ),
-                            ).then((_) => fetchUserData());
-                          },
-                          style: AppStyles.primaryButtonStyle,
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
       ),
-      // <--- AQUÍ PONEMOS EL BOTÓN FLOTANTE ---
+
+      // Botón flotante para chat
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          
           Navigator.push(
-             context,
-             MaterialPageRoute(builder: (context) => const ChatScreen()),
-           );
+            context,
+            MaterialPageRoute(builder: (context) => const ChatScreen()),
+          );
         },
         child: const Icon(Icons.chat),
       ),
     );
   }
+
 }

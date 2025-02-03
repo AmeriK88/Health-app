@@ -77,21 +77,39 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // Llama al login y obtiene el token
+      // 1) Llamar al login y obtener el token
       final token = await apiService.login(
         usernameController.text,
         passwordController.text,
       );
 
-      // Muestra mensaje de éxito
+      // 2) IMPORTANTE: actualizar el token en el DailyStatusNotifier
+      context.read<DailyStatusNotifier>().setToken(token);
+
+      // 3) Verificar si el usuario ha registrado estado diario hoy
+      final todayStatuses = await fetchDailyStatuses(token);
+      final bool hasTodayStatus = todayStatuses.any((status) {
+        final statusDate = DateTime.parse(status['date']);
+        final now = DateTime.now();
+        return statusDate.year == now.year &&
+            statusDate.month == now.month &&
+            statusDate.day == now.day;
+      });
+
+      // 4) Redirigir según si ha registrado o no el estado diario
+      Widget nextScreen = hasTodayStatus
+          ? HomeScreen(token: token) // Si ya tiene estado de hoy, va al Home
+          : DailyStatusScreen(token: token); // Si no, va a registrar estado
+
+      // 5) Muestra mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Inicio de sesión exitoso')),
       );
 
-      // Redirige al Home
+      // 6) Redirige a la pantalla correspondiente
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen(token: token)),
+        MaterialPageRoute(builder: (context) => nextScreen),
       );
     } catch (e) {
       // Manejo de errores
@@ -106,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
+
 
 
   @override
