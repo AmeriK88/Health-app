@@ -8,6 +8,8 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/configuration_screen.dart';
+import 'package:frontend/utils/styles.dart';
+
 
 void main() async {
   // Carga las variables del archivo .env (incluida la OPENAI_API_KEY)

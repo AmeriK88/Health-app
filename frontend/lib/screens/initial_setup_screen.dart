@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../utils/styles.dart';
-import '../widgets/custom_button.dart'; // Asegúrate de importar CustomButton aquí
+import '../widgets/buttons/custom_button.dart'; // Asegúrate de importar CustomButton aquí
 
 class InitialSetupScreen extends StatefulWidget {
   final String token;

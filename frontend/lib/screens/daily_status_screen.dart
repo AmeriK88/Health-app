@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-// 1. Importar Provider para usar context.read() y context.watch()
 import 'package:provider/provider.dart';
-
 import '../providers/daily_status_notifier.dart';
 import '../utils/styles.dart';
 import 'home_screen.dart';
-import '../widgets/custom_button.dart';
+import '../widgets/buttons/custom_button.dart';
 
 
 class DailyStatusScreen extends StatefulWidget {

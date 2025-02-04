@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-
-// 1. Importa Provider y tu DailyStatusNotifier
 import 'package:provider/provider.dart';
 import '../providers/daily_status_notifier.dart';
-
 import '../services/api_service.dart';
 import '../services/daily_status_service.dart';
 import 'register_screen.dart';
 import 'home_screen.dart';
 import 'daily_status_screen.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/input_field.dart';
-import '../widgets/error_message.dart';
+import '../widgets/buttons/custom_button.dart';
+import '../widgets/inputs/input_field.dart';
+import '../widgets/feedback/error_message.dart';
 import '../utils/styles.dart';
 
 class LoginScreen extends StatefulWidget {
