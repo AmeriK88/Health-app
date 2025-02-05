@@ -16,9 +16,6 @@ Future<void> registerDailyStatus(String token, Map<String, dynamic> data) async 
       throw Exception('Estado de ánimo no especificado.');
     }
 
-    // Antes de la petición, imprimimos el token para depuración
-    print('Token enviado: Bearer $token');
-
     final response = await http.post(
       url,
       headers: {

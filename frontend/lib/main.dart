@@ -8,8 +8,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/configuration_screen.dart';
-import 'package:frontend/utils/styles.dart';
-
+import 'utils/styles.dart'; // ✅ Asegura que styles.dart esté correctamente importado
 
 void main() async {
   // Carga las variables del archivo .env (incluida la OPENAI_API_KEY)
@@ -40,10 +39,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Health App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: AppStyles.primarySwatch, // ✅ Usa el color principal definido en styles.dart
+        scaffoldBackgroundColor: AppStyles.backgroundColor, // ✅ Fondo global
         useMaterial3: true,
+
+        // Personalización del AppBar
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppStyles.primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 4,
+        ),
+
+        // Botones
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: AppStyles.primaryButtonStyle, // ✅ Aplica el estilo global a los botones elevados
+        ),
+
+        // Inputs
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppStyles.primaryColor, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
       ),
+
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
@@ -57,7 +81,7 @@ class MyApp extends StatelessWidget {
             return HomeScreen(token: args);
           }
           // Si no hay token, vuelve al login
-          return const LoginScreen(); 
+          return const LoginScreen();
         },
 
         '/configuracion': (context) => const ConfigurationScreen(),

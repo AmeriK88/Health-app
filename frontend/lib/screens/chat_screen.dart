@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/chat_notifier.dart';
+import '../utils/styles.dart';
+
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -24,13 +26,13 @@ class ChatScreen extends StatelessWidget {
                 // role => "user", "assistant", "system"
                 final isUser = msg["role"] == "user";
                 return Container(
-                  margin: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                   alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.blue[100] : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
+                      color: isUser ? AppStyles.primaryColor.withOpacity(0.1) : AppStyles.secondaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(msg["content"] ?? ""),
                   ),

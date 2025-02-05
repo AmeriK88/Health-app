@@ -71,7 +71,6 @@ class ApiService {
 
     await _handleError(response);
     final data = jsonDecode(response.body);
-    print("Token recibido en login: ${data['access']}");
     return data['access'];
   }
 
