@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/utils/styles.dart';
+import 'package:frontend/widgets/buttons/custom_button.dart';
+
 
 class UserInfoCard extends StatelessWidget {
   final Map<String, dynamic>? userData;
@@ -51,13 +53,25 @@ class UserInfoCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
+            // ✅ Estado físico
+            if (userData?['physical_state'] != null)
+              Text(
+                'Estado físico: ${userData!['physical_state']}',
+                style: AppStyles.subHeaderTextStyle.copyWith(
+                  color: AppStyles.primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+            const SizedBox(height: 10),
+
             // Botón de editar
             Align(
               alignment: Alignment.centerRight,
-              child: ElevatedButton(
+              child: CustomButton(
+                text: "Editar Información",
                 onPressed: onEdit,
-                style: AppStyles.primaryButtonStyle,
-                child: const Text("Editar Información"),
+                isLoading: false, 
               ),
             ),
           ],

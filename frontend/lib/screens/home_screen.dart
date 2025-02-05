@@ -37,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final data = await ApiService().getDashboard(widget.token);
 
-      print("Datos recibidos del servidor: ${jsonEncode(data)}");
-
       final bool missingData = data['weight'] == null ||
           data['weight'] == 0 ||
           data['height'] == null ||
@@ -55,7 +53,16 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       } else {
         setState(() {
-          userData = data;
+          userData = {
+            "username": data['username'],
+            "age": data['age'],
+            "bio": data['bio'],
+            "weight": data['weight'],
+            "height": data['height'],
+            "goal": data['goal'],
+            "avatar": data['avatar'],
+            "physical_state": data['physical_state'], // ✅ Agregado aquí
+          };
           dailyStatuses = data['daily_statuses'] ?? [];
           isLoading = false;
         });
@@ -114,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Inicio'),
         flexibleSpace: Container(
-        decoration: AppStyles.gradientBackground,
+          decoration: AppStyles.gradientBackground,
         ),
         actions: [
           IconButton(
