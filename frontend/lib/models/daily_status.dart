@@ -1,6 +1,6 @@
 class DailyStatus {
   final String date;
-  final String energyLevel; // bajo, medio, alto
+  final String energyLevel;
   final bool hasPain;
   final bool isTired;
   final String mood;

@@ -113,7 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inicio'),
-        backgroundColor: AppStyles.primaryColor,
+        flexibleSpace: Container(
+        decoration: AppStyles.gradientBackground,
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

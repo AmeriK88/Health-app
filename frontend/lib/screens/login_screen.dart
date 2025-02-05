@@ -20,51 +20,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final ApiService apiService = ApiService();
-
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   String errorMessage = '';
   bool isLoading = false;
 
-  Future<void> handleRedirection(String token) async {
-    try {
-      final todayStatuses = await fetchDailyStatuses(token);
-
-      final bool hasTodayStatus = todayStatuses.any((status) {
-        final statusDate = DateTime.parse(status['date']);
-        final now = DateTime.now();
-        return statusDate.year == now.year &&
-            statusDate.month == now.month &&
-            statusDate.day == now.day;
-      });
-
-      if (hasTodayStatus) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen(token: token)),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DailyStatusScreen(token: token)),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Error al verificar estados diarios: $e';
-      });
-    }
-  }
-
   void login() async {
     if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
-      // Establecer error y mostrar SnackBar
-      final error = 'Por favor, completa todos los campos.';
-      setState(() {
-        errorMessage = error;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      setState(() => errorMessage = 'Por favor, completa todos los campos.');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
       return;
     }
 
@@ -74,55 +38,33 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // 1) Llamar al login y obtener el token
-      final token = await apiService.login(
-        usernameController.text,
-        passwordController.text,
-      );
-
-      // 2) IMPORTANTE: actualizar el token en el DailyStatusNotifier
+      final token = await apiService.login(usernameController.text, passwordController.text);
       context.read<DailyStatusNotifier>().setToken(token);
 
-      // 3) Verificar si el usuario ha registrado estado diario hoy
       final todayStatuses = await fetchDailyStatuses(token);
       final bool hasTodayStatus = todayStatuses.any((status) {
         final statusDate = DateTime.parse(status['date']);
         final now = DateTime.now();
-        return statusDate.year == now.year &&
-            statusDate.month == now.month &&
-            statusDate.day == now.day;
+        return statusDate.year == now.year && statusDate.month == now.month && statusDate.day == now.day;
       });
 
-      // 4) Redirigir según si ha registrado o no el estado diario
-      Widget nextScreen = hasTodayStatus
-          ? HomeScreen(token: token) // Si ya tiene estado de hoy, va al Home
-          : DailyStatusScreen(token: token); // Si no, va a registrar estado
-
-      // 5) Muestra mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Inicio de sesión exitoso')),
       );
 
-      // 6) Redirige a la pantalla correspondiente
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => nextScreen),
+        MaterialPageRoute(
+          builder: (context) => hasTodayStatus ? HomeScreen(token: token) : DailyStatusScreen(token: token),
+        ),
       );
     } catch (e) {
-      // Manejo de errores
-      final error = 'Error al iniciar sesión: $e';
-      setState(() {
-        errorMessage = error;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      setState(() => errorMessage = 'Error al iniciar sesión: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: Card(
-              elevation: 8,
+              elevation: 10, // 🔥 Aumentamos la elevación para más profundidad
+              shadowColor: Colors.black.withOpacity(0.2), // ✅ Sombra más realista
               margin: AppStyles.cardMargin,
               shape: AppStyles.cardBorderStyle,
               child: Padding(
@@ -142,20 +85,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Image.asset('assets/avatar.png', height: 100),
                     const SizedBox(height: 20),
-                    const Text(
+
+                    // 🏆 ✅ Mejoramos el título con mayor tamaño y estilo
+                    Text(
                       'Iniciar Sesión',
-                      style: AppStyles.loginHeaderTextStyle,
+                      style: AppStyles.loginHeaderTextStyle.copyWith(fontSize: 26),
                     ),
                     const SizedBox(height: 10),
-                    if (errorMessage.isNotEmpty)
-                      ErrorMessage(message: errorMessage),
+
+                    if (errorMessage.isNotEmpty) ErrorMessage(message: errorMessage),
                     const SizedBox(height: 10),
+
+                    // 📌 Mejoramos la separación de los inputs
                     InputField(
                       controller: usernameController,
                       label: 'Usuario',
                       icon: Icons.person,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15), // 🔥 Más espacio entre inputs
                     InputField(
                       controller: passwordController,
                       label: 'Contraseña',
@@ -163,23 +110,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: true,
                     ),
                     const SizedBox(height: 20),
+
+                    // 📌 Usamos el estilo de botón definido en `AppStyles`
                     CustomButton(
                       text: 'Iniciar Sesión',
                       onPressed: login,
                       isLoading: isLoading,
                     ),
                     const SizedBox(height: 10),
+
+                    // 📌 Hacemos el texto del botón más grande y centrado
                     TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RegisterScreen()),
-                        );
-                      },
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                      ),
                       child: const Text(
                         '¿No tienes cuenta? Regístrate aquí',
                         style: AppStyles.linkTextStyle,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],
