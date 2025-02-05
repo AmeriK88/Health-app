@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             "height": data['height'],
             "goal": data['goal'],
             "avatar": data['avatar'],
-            "physical_state": data['physical_state'], // ✅ Agregado aquí
+            "physical_state": data['physical_state'], 
           };
           dailyStatuses = data['daily_statuses'] ?? [];
           isLoading = false;

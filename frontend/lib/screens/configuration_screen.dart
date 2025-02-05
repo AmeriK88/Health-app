@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+///  **ConfigurationScreen** - Pantalla de configuración inicial.
+/// - Se usa para configurar los ajustes antes de comenzar.
+/// - Actualmente solo muestra un mensaje, pero puede expandirse en el futuro.
 class ConfigurationScreen extends StatelessWidget {
   const ConfigurationScreen({super.key});
 

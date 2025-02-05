@@ -5,7 +5,10 @@ import '../utils/styles.dart';
 import 'home_screen.dart';
 import '../widgets/buttons/custom_button.dart';
 
-
+///  **DailyStatusScreen**
+/// - Pantalla donde el usuario registra su estado diario.
+/// - Permite ingresar nivel de energía, dolor, cansancio y estado de ánimo.
+/// - Guarda la información mediante el DailyStatusNotifier.
 class DailyStatusScreen extends StatefulWidget {
   final String token;
 
@@ -16,12 +19,14 @@ class DailyStatusScreen extends StatefulWidget {
 }
 
 class _DailyStatusScreenState extends State<DailyStatusScreen> {
+  //  Estado del formulario
   String? selectedEnergyLevel;
   String? selectedMood;
   final TextEditingController notesController = TextEditingController();
   bool pain = false;
   bool tiredness = false;
 
+  //  Opciones disponibles para nivel de energía y estado de ánimo
   final List<Map<String, String>> energyLevels = [
     {'key': 'low', 'label': 'Bajo'},
     {'key': 'medium', 'label': 'Medio'},
@@ -34,6 +39,9 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
     {'key': 'good', 'label': 'Bien'},
   ];
 
+  ///  **Guardar Estado Diario**
+  /// - Valida que todos los campos obligatorios estén completos.
+  /// - Envía los datos a `DailyStatusNotifier`.
   Future<void> saveStatus(BuildContext context) async {
     if (selectedEnergyLevel == null || selectedMood == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +52,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
       return;
     }
 
-    // Preparar data
+    //  Datos que se enviarán al backend
     final Map<String, dynamic> data = {
       'energy_level': selectedEnergyLevel,
       'has_pain': pain,
@@ -53,18 +61,17 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
       'notes': notesController.text.trim(),
     };
 
-    // 2. En lugar de llamar a registerDailyStatus(...),
-    //    usamos el método del notifier.
+    //  Se registra el estado en la API a través del notifier
     await context.read<DailyStatusNotifier>().registerDailyStatusToApi(data);
 
-    // 3. Revisamos si hubo error
+    //  Verificar si ocurrió un error
     final errorMessage = context.read<DailyStatusNotifier>().errorMessage;
     if (errorMessage.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al guardar estado: $errorMessage')),
       );
     } else {
-      // Éxito
+      //  Estado guardado con éxito, redirige al HomeScreen
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Estado guardado con éxito')),
       );
@@ -79,9 +86,8 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 4. Escuchamos si el notifier está en loading
-    final dsNotifier = context.watch<DailyStatusNotifier>();
-    final isLoading = dsNotifier.isLoading;
+    final dsNotifier = context.watch<DailyStatusNotifier>(); // Escucha cambios en el notifier
+    final isLoading = dsNotifier.isLoading; // Indica si se está procesando una petición
 
     return Scaffold(
       appBar: AppBar(
@@ -94,6 +100,7 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// **Nivel de Energía**
               const Text(
                 'Nivel de Energía',
                 style: AppStyles.headerTextStyle,
@@ -113,7 +120,10 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
                   });
                 },
               ),
+
               const SizedBox(height: 20),
+
+              /// **Dolor**
               const Text(
                 'Dolor',
                 style: AppStyles.headerTextStyle,
@@ -127,7 +137,10 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
                   });
                 },
               ),
+
               const SizedBox(height: 20),
+
+              /// **Cansancio**
               const Text(
                 'Cansancio',
                 style: AppStyles.headerTextStyle,
@@ -141,7 +154,10 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
                   });
                 },
               ),
+
               const SizedBox(height: 20),
+
+              /// **Estado de Ánimo**
               const Text(
                 'Estado de Ánimo',
                 style: AppStyles.headerTextStyle,
@@ -161,7 +177,10 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
                   });
                 },
               ),
+
               const SizedBox(height: 20),
+
+              /// **Notas adicionales**
               const Text(
                 'Notas adicionales',
                 style: AppStyles.headerTextStyle,
@@ -174,11 +193,14 @@ class _DailyStatusScreenState extends State<DailyStatusScreen> {
                 ),
                 maxLines: 3,
               ),
+
               const SizedBox(height: 20),
+
+              /// **Botón de Guardar Estado**
               CustomButton(
                 text: 'Guardar Estado',
                 onPressed: () => saveStatus(context),
-                isLoading: isLoading,
+                isLoading: isLoading, // Indica si se está cargando la petición
               ),
             ],
           ),

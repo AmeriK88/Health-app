@@ -9,6 +9,12 @@ import '../widgets/inputs/input_field.dart';
 import '../widgets/feedback/error_message.dart';
 import '../utils/styles.dart';
 
+///  **Pantalla de Registro de Usuario**
+/// - Permite al usuario ingresar su información personal para registrarse.
+/// - Incluye validaciones en los campos del formulario.
+/// - Permite la selección de un avatar.
+/// - Si el registro es exitoso, redirige al usuario de vuelta a la pantalla de inicio de sesión.
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
 
@@ -19,6 +25,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final ApiService apiService = ApiService();
 
+  ///  **Controladores para capturar los datos ingresados**
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
@@ -33,10 +40,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Uint8List? avatarBytes;
   final ImagePicker _picker = ImagePicker();
 
-  bool isLoading = false;
-  String errorMessage = '';
+  bool isLoading = false; //  Indica si el registro está en proceso
+  String errorMessage = ''; //  Mensaje de error si ocurre algún problema
 
-  /// 🔹 **Validación del formulario**
+  ///  **Validación del formulario**
+  /// - Verifica que todos los campos requeridos estén completos.
+  /// - Asegura que el email y la confirmación coincidan.
+  /// - Asegura que la contraseña sea segura y coincida con la confirmación.
   bool validateForm() {
     setState(() => errorMessage = '');
 
@@ -83,7 +93,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return true;
   }
 
-  /// 🔹 **Selección del Avatar**
+  ///  **Selección del Avatar**
+  /// - Permite al usuario elegir una imagen desde la galería.
   Future<void> pickAvatar() async {
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -103,7 +114,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  /// 🔹 **Registro del usuario**
+  ///  **Registro del usuario**
+  /// - Envía los datos a la API para registrar al usuario.
+  /// - Muestra un mensaje de éxito o error según el resultado.
   void register() async {
     if (!validateForm()) {
       if (errorMessage.isNotEmpty) {
@@ -142,6 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      ///  **Fondo con gradiente **
       body: Container(
         decoration: AppStyles.gradientBackground,
         child: Center(
@@ -156,17 +170,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    ///  **Título**
                     const Text(
                       'Crear Cuenta',
                       style: AppStyles.headerTextStyle,
                     ),
                     const SizedBox(height: 10),
 
+                    ///  **Mensaje de error**
                     if (errorMessage.isNotEmpty)
                       ErrorMessage(message: errorMessage),
                     const SizedBox(height: 10),
 
-                    // Inputs
+                    //  **Campos del formulario**
                     InputField(controller: firstNameController, label: 'Nombre', icon: Icons.person),
                     const SizedBox(height: 10),
                     InputField(controller: lastNameController, label: 'Apellidos', icon: Icons.person),
@@ -186,7 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     InputField(controller: bioController, label: 'Biografía', icon: Icons.info),
                     const SizedBox(height: 20),
 
-                    // Avatar
+                    ///  **Avatar**
                     GestureDetector(
                       onTap: pickAvatar,
                       child: CircleAvatar(
@@ -205,7 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     TextButton(onPressed: pickAvatar, child: const Text('Seleccionar Avatar')),
                     const SizedBox(height: 20),
 
-                    // Botón de registro
+                    ///  **Botón de Registro**
                     CustomButton(
                       text: 'Registrar',
                       onPressed: register,

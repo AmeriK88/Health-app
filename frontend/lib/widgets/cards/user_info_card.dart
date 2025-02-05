@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/styles.dart';
 import 'package:frontend/widgets/buttons/custom_button.dart';
 
-
+/// Widget para mostrar la información del usuario en una tarjeta.
+/// Incluye datos como avatar, nombre de usuario, edad, peso, altura, estado físico y un botón para editar la información.
 class UserInfoCard extends StatelessWidget {
-  final Map<String, dynamic>? userData;
-  final VoidCallback onEdit;
+  final Map<String, dynamic>? userData; // Datos del usuario obtenidos desde el backend.
+  final VoidCallback onEdit; // Función que se ejecuta al presionar el botón de editar.
 
   const UserInfoCard({
     Key? key,
@@ -16,16 +17,17 @@ class UserInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white.withOpacity(0.9),
-      elevation: 8,
+      color: Colors.white.withOpacity(0.9), // Fondo semitransparente .
+      elevation: 8, // Agrega sombra para mejorar la visibilidad de la tarjeta.
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(15), // Bordes redondeados.
       ),
       child: Padding(
-        padding: AppStyles.pagePadding,
+        padding: AppStyles.pagePadding, // Espaciado uniforme alrededor del contenido.
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Título de la tarjeta
             Text('Información del Usuario:', style: AppStyles.headerTextStyle),
             const SizedBox(height: 10),
 
@@ -33,12 +35,12 @@ class UserInfoCard extends StatelessWidget {
             if (userData?['avatar'] != null)
               CircleAvatar(
                 radius: 50,
-                backgroundImage: NetworkImage(userData!['avatar']),
+                backgroundImage: NetworkImage(userData!['avatar']), // Carga la imagen del usuario si está disponible.
               )
             else
               const CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.grey, // Muestra un avatar gris si el usuario no tiene imagen.
                 child: Icon(Icons.person, size: 50, color: Colors.white),
               ),
             const SizedBox(height: 10),
@@ -53,7 +55,7 @@ class UserInfoCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // ✅ Estado físico
+            // Estado físico basado en el IMC (si está disponible)
             if (userData?['physical_state'] != null)
               Text(
                 'Estado físico: ${userData!['physical_state']}',
@@ -65,12 +67,12 @@ class UserInfoCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // Botón de editar
+            // Botón de editar información del usuario
             Align(
               alignment: Alignment.centerRight,
               child: CustomButton(
                 text: "Editar Información",
-                onPressed: onEdit,
+                onPressed: onEdit, // Llama a la función que permite editar los datos del usuario.
                 isLoading: false, 
               ),
             ),
