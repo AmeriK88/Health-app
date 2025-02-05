@@ -20,12 +20,14 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            print(f"✅ Usuario registrado: {user.first_name} {user.last_name}")
             logger.info(f"Usuario registrado: {user.username}")
             return Response(
                 {"message": "Usuario registrado con éxito."},
                 status=status.HTTP_201_CREATED
             )
         else:
+            print(f"❌ Errores en el registro: {serializer.errors}")
             logger.error(f"Errores al registrar usuario: {serializer.errors}")
             return Response(
                 {"errors": serializer.errors},

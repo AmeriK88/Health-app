@@ -19,6 +19,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final ApiService apiService = ApiService();
 
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController emailConfirmController = TextEditingController();
@@ -39,6 +41,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => errorMessage = '');
 
     if ([
+      firstNameController.text,
+      lastNameController.text,
       usernameController.text,
       emailController.text,
       emailConfirmController.text,
@@ -112,6 +116,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       await apiService.registerUser(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
         username: usernameController.text,
         email: emailController.text,
         emailConfirm: emailConfirmController.text,
@@ -141,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: Card(
-              elevation: 10, // ✅ Más profundidad
+              elevation: 10, 
               shadowColor: Colors.black.withOpacity(0.2),
               margin: AppStyles.cardMargin,
               shape: AppStyles.cardBorderStyle,
@@ -161,6 +167,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 10),
 
                     // Inputs
+                    InputField(controller: firstNameController, label: 'Nombre', icon: Icons.person),
+                    const SizedBox(height: 10),
+                    InputField(controller: lastNameController, label: 'Apellidos', icon: Icons.person),
+                    const SizedBox(height: 10),
                     InputField(controller: usernameController, label: 'Usuario', icon: Icons.person),
                     const SizedBox(height: 10),
                     InputField(controller: emailController, label: 'Correo Electrónico', icon: Icons.email),

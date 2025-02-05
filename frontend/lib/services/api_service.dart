@@ -14,6 +14,8 @@ class ApiService {
   }
 
   Future<void> registerUser({
+    required String firstName,
+    required String lastName,
     required String username,
     required String email,
     required String emailConfirm,
@@ -26,12 +28,14 @@ class ApiService {
   }) async {
     var uri = Uri.parse('${baseUrl}register/');
     var request = http.MultipartRequest('POST', uri);
-
+    
+    request.fields['first_name'] = firstName;
+    request.fields['last_name'] = lastName;
     request.fields['username'] = username;
     request.fields['email'] = email;
-    request.fields['email_confirm'] = emailConfirm; // Nuevo campo
+    request.fields['email_confirm'] = emailConfirm; 
     request.fields['password'] = password;
-    request.fields['password_confirm'] = passwordConfirm; // Nuevo campo
+    request.fields['password_confirm'] = passwordConfirm;
     request.fields['age'] = age.toString();
     request.fields['bio'] = bio;
 

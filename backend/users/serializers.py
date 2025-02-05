@@ -5,7 +5,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
-            'id', 'username', 'email', 'password', 
+            'id', 'first_name', 'last_name', 'username', 'email', 'password', 
             'age', 'bio', 'weight', 'height', 'goal', 'avatar'
         ]
         extra_kwargs = {
@@ -15,6 +15,8 @@ class UserSerializer(serializers.ModelSerializer):
             'weight': {'required': False},
             'height': {'required': False},
             'goal': {'required': False},
+            'first_name': {'required': True},  
+            'last_name': {'required': True},  
         }
 
     def validate_email(self, value):
