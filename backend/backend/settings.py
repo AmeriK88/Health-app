@@ -23,7 +23,6 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http://localhost(:\d+)?$",  # Localhost con cualquier puerto
     r"^http://127\.0\.0\.1(:\d+)?$",  # 127.0.0.1 con cualquier puerto
-    r"^https://nch3dfrw-61278\.uks1\.devtunnels\.ms(:\d+)?$",  # Dominio del túnel
 ]
 
 
